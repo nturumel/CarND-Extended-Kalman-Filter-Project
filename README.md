@@ -23,3 +23,11 @@ The main program can be built and run by doing the following from the project to
 3. cmake ..
 4. make
 5. ./ExtendedKF
+
+## Results
+My px, py, vx, and vy RMSE should be less than or equal to the values [.11, .11, 0.52, 0.52].
+The results look something like this.
+
+
+[![Watch the video](https://i.imgur.com/vKb2F1B.png)](https://youtu.be/edaXaYf95ls)
+
