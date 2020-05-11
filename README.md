@@ -6,7 +6,7 @@ The following source files are the main players:
 ## 1. FusionEKF.cpp
 This is used for initialising the variables needed for the actual kalman filter.
 The variables initialised include:
-#### state x, #### prediction F, #### measurement noise H, #### prediciton noise P
+#### state x, prediction F, measurement noise H, prediciton noise P
 
 ## 2. KalmanFilter.cpp
 This class implements the predict and update function, care is taken to handle the radar data which is in polar coordinates. 
