@@ -17,3 +17,12 @@ Because lidar uses linear equations, the update step will use the basic Kalman f
 
 ## 3. Tools.cpp
 This implements functions to calculate root mean squared error and the Jacobian matrix.
+
+## Build Instructions
+The main program can be built and run by doing the following from the project top directory.
+
+1. mkdir build
+2. cd build
+3. cmake ..
+4. make
+5. ./ExtendedKF
