@@ -29,5 +29,5 @@ My px, py, vx, and vy RMSE should be less than or equal to the values [.11, .11,
 The results look something like this.
 
 
-[![Watch the video](https://i.imgur.com/vKb2F1B.png)](https://youtu.be/edaXaYf95ls)
+[![Watch the video](https://softwaretested.com/wp-content/uploads/2019/06/YouTube-Video-Player.jpg)](https://youtu.be/edaXaYf95ls)
 
