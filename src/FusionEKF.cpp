@@ -9,6 +9,25 @@ using std::cout;
 using std::endl;
 using std::vector;
 
+ // acceleration noise for Q process noise
+  const double noise_ax = 9 ;
+  const double noise_ay = 9 ;
+    
+Eigen::VectorXd ConvertToCartesian(const VectorXd &x)
+{
+  VectorXd result(4);
+  const double & rho=x(0);
+  const double & phi=x(1);
+  
+  double px=rho*cos(phi);
+  double py=rho*sin(phi);
+  
+  
+  result<<px,py,0,0;
+  return result; 
+}
+
+    
 /**
  * Constructor.
  */
@@ -36,7 +55,12 @@ FusionEKF::FusionEKF() {
    * TODO: Finish initializing the FusionEKF.
    * TODO: Set the process and measurement noises
    */
-
+ 
+    
+  // H measurement noise
+  H_laser_<<1,0,0,0,
+  			0,1,0,0;  
+  
 
 }
 
@@ -64,11 +88,16 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
     if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
       // TODO: Convert radar from polar to cartesian coordinates 
       //         and initialize state.
+      VectorXd polar=measurement_pack.raw_measurements_;
+      VectorXd cartesian=ConvertToCartesian(polar);
+      ekf_.x_=cartesian;      
 
     }
     else if (measurement_pack.sensor_type_ == MeasurementPackage::LASER) {
       // TODO: Initialize state.
-
+	  VectorXd cartesian=measurement_pack.raw_measurements_;
+	  ekf_.x_=cartesian;      
+      
     }
 
     // done initializing, no need to predict or update
@@ -86,13 +115,25 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
    * TODO: Update the process noise covariance matrix.
    * Use noise_ax = 9 and noise_ay = 9 for your Q matrix.
    */
-
+	
+  double dt=(measurement_pack.timestamp_-previous_timestamp_);
+  double dt2,dt3,dt4;
+  dt2=dt*dt;
+  dt3=dt2*dt;
+  dt4=dt3*dt;
+  ekf_.Q_=MatrixXd(4,4);
+  ekf_.Q_<<(dt4*noise_ax/4),(0),(dt3*noise_ax/2),0,
+  0,(dt4*noise_ay/4),0,(dt3*noise_ay/2),
+  (dt3*noise_ax/2),0,(dt2*noise_ax),0,
+  0,(dt3*noise_ay/2),0,(dt2*noise_ax);
+  
+  
   ekf_.Predict();
 
   /**
    * Update
    */
-
+	
   /**
    * TODO:
    * - Use the sensor type to perform the update step.
@@ -101,9 +142,15 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 
   if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
     // TODO: Radar updates
+    ekf_.R_=R_radar_;
+    ekf_.UpdateEKF(measurement_pack.raw_measurements_);
 
   } else {
     // TODO: Laser updates
+    ekf_.R_=R_laser_;
+    Tools tool;
+    ekf_.H_=tool.CalculateJacobian(ekf_.x_);
+    ekf_.Update(measurement_pack.raw_measurements_);
 
   }
 
@@ -111,3 +158,5 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
   cout << "x_ = " << ekf_.x_ << endl;
   cout << "P_ = " << ekf_.P_ << endl;
 }
+
+
